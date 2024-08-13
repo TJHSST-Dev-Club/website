@@ -92,3 +92,11 @@ Todo
 # Images
 
 Todo
+
+# Running the development server
+
+Todo, but for now run `npm run dev`
+
+# Deploying
+
+Todo
