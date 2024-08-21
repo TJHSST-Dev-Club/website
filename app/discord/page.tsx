@@ -1,0 +1,67 @@
+"use client";
+
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import Header from "@/components/ui/Header";
+
+export default function Discord() {
+  const { setTheme } = useTheme();
+
+  setTheme("dark");
+
+  return (
+    <main className="flex p-6 w-full flex-col gap-6">
+      <div className="shadow-div w-full h-16 p-6 rounded-3xl bg-card flex flex-row justify-between">
+        <p>Dev club logo</p>
+        <p className="flex flex-row gap-2">
+          <Link href="/" className="underline underline-offset-1">
+            Home
+          </Link>
+          <Link href="/discord" className="underline underline-offset-1">
+            Discord
+          </Link>
+        </p>
+      </div>
+
+      <div className="shadow-div w-full p-6 rounded-3xl bg-card min-h-64 text-xl flex gap-4 flex-col">
+        <Header>Join the Dev Club Discord server!</Header>
+        <ul>
+          <li>- Get club announcements</li>
+          <li>- Connect with other club members</li>
+          <li>- Get help and showcase your work</li>
+        </ul>
+
+        <Button
+          onClick={() =>
+            (window.location.href = "https://discord.gg/sP3WVQRQPC")
+          }
+        >
+          Join the server
+        </Button>
+      </div>
+
+      <div className="shadow-div w-full p-6 rounded-3xl bg-card min-h-64 text-xl flex flex-col gap-4">
+        <Header>Need to verify?</Header>
+
+        <p>
+          Once you've joined the Discord server, you need to verify your
+          account.
+        </p>
+
+        <p>
+          Please only click the verify button AFTER you have joined the Discord
+          server.
+        </p>
+
+        <Button
+          variant={"outline"}
+          onClick={() => (window.location.href = "/verify")}
+        >
+          Click here to verify
+        </Button>
+      </div>
+    </main>
+  );
+}
