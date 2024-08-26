@@ -5,6 +5,8 @@ import { useTheme } from "next-themes";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/ui/Header";
+import MainHeader from "@/components/ui/MainHeader";
+import { useState } from "react";
 
 export default function Discord() {
   const { setTheme } = useTheme();
@@ -13,17 +15,7 @@ export default function Discord() {
 
   return (
     <main className="flex p-6 w-full flex-col gap-6">
-      <div className="shadow-div w-full h-16 p-6 rounded-3xl bg-card flex flex-row justify-between">
-        <p>Dev club logo</p>
-        <p className="flex flex-row gap-2">
-          <Link href="/" className="underline underline-offset-1">
-            Home
-          </Link>
-          <Link href="/discord" className="underline underline-offset-1">
-            Discord
-          </Link>
-        </p>
-      </div>
+      <MainHeader />
 
       <div className="shadow-div w-full p-6 rounded-3xl bg-card min-h-64 text-xl flex gap-4 flex-col">
         <Header>Join the Dev Club Discord server!</Header>
@@ -46,18 +38,17 @@ export default function Discord() {
         <Header>Need to verify?</Header>
 
         <p>
-          Once you've joined the Discord server, you need to verify your
-          account.
+          Once you&#39;ve joined the Discord server, you need to verify that you
+          attend TJ.
         </p>
 
-        <p>
-          Please only click the verify button AFTER you have joined the Discord
-          server.
-        </p>
+        <p>Please fill out this Google Form to verify.</p>
 
         <Button
           variant={"outline"}
-          onClick={() => (window.location.href = "/verify")}
+          onClick={() =>
+            (window.location.href = "https://forms.gle/4jTpWBPecgmjnGCE7")
+          }
         >
           Click here to verify
         </Button>
@@ -65,3 +56,23 @@ export default function Discord() {
     </main>
   );
 }
+
+function MyComponent() {
+  const [myMsg, setMsg] = useState("");
+
+  function buttonHandler() {
+    setMsg("Hello world!");
+  }
+
+  return (
+    <div>
+      <p>{myMsg}</p>
+      <button onClick={buttonHandler}>Change message</button>
+    </div>
+  );
+}
+
+
+<script>
+  function onClick
+</script>

@@ -45,7 +45,7 @@ export default function Home() {
       <MainHeader />
 
       <div className="shadow-div w-full p-6 rounded-3xl bg-card h-[65vh] flex justify-center align-middle flex-col">
-        <h1 className="text-9xl text-devClub text-center font-semibold">
+        <h1 className="lg:text-9xl text-devClub text-center font-semibold text-5xl">
           TJ Dev Club
         </h1>
         <p className="text-center text-xl">Hello world!</p>
@@ -67,28 +67,28 @@ export default function Home() {
         <Header>Officers</Header>
         <div className="flex justify-around flex-wrap gap-4">
           <OfficerCard
-            imageLink="/temp.png"
+            imageLink="/sophia.jpg"
             name="Sophia Huang"
             role="Co-President"
             year="2025"
           />
 
           <OfficerCard
-            imageLink="/temp.png"
+            imageLink="/ryan.png"
             name="Ryan Ghimire"
             role="Co-President"
             year="2025"
           />
 
           <OfficerCard
-            imageLink="/temp.png"
+            imageLink="/shayan.png"
             name="Shayan Akram"
             role="Lecturer"
             year="2025"
           />
 
           <OfficerCard
-            imageLink="/temp.png"
+            imageLink="/eric.png"
             name="Eric Guo"
             role="Lecturer"
             year="2026"

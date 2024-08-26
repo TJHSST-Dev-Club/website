@@ -11,6 +11,14 @@ export default function MainHeader() {
         <Link href="/" className="underline underline-offset-1">
           Home
         </Link>
+
+        <Link
+          href="https://docs.google.com/spreadsheets/d/1tR1i9VrXUSpIyDBwqhyztz_CBvYVOSGq6j6OwwbCtKU/edit?usp=sharing"
+          className="underline underline-offset-1"
+        >
+          Lectures
+        </Link>
+
         <Link href="/discord" className="underline underline-offset-1">
           Discord
         </Link>
