@@ -37,6 +37,17 @@ p {
     font-size: 1.2em;
 }
 
+@media (max-width: 600px) {
+    .hide-on-mobile {
+        display: none;
+    }
+
+    #main {
+        font-size: 5rem !important;
+    }
+}
+
+
 .container {
     position: relative;
     box-sizing: border-box;
