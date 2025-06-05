@@ -72,6 +72,7 @@ p {
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: center;
     font-family: 'Arial Rounded';
     font-size: 7rem;
     color: #5ac1ea;
