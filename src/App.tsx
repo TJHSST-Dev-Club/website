@@ -53,6 +53,66 @@ type Lecture = {
 
 function App() {
   const [fetchedLectures, setFetchedLectures] = useState<null | { upcoming: Lecture[]; previous: Lecture[] }>(null)
+  const languageExamples = [
+    {
+      id: 'js',
+      label: 'JavaScript',
+      fileName: 'welcome.js',
+      run: '$ node welcome.js',
+      code: `function joinDevClub() {\n  console.log(welcomeMessage);\n  surprise();\n}`,
+    },
+    {
+      id: 'ts',
+      label: 'TypeScript',
+      fileName: 'welcome.ts',
+      run: '$ ts-node welcome.ts',
+      code: `function joinDevClub(): void {\n  console.log(welcomeMessage);\n  surprise();\n}`,
+    },
+    {
+      id: 'py',
+      label: 'Python',
+      fileName: 'welcome.py',
+      run: '$ python welcome.py',
+      code: `def join_dev_club():\n    print(welcome_message)\n    surprise()`,
+    },
+    {
+      id: 'java',
+      label: 'Java',
+      fileName: 'Welcome.java',
+      run: '$ javac Welcome.java && java Welcome',
+      code: `static void joinDevClub() {\n  System.out.println(welcomeMessage);\n  surprise();\n}`,
+    },
+    {
+      id: 'cpp',
+      label: 'C++',
+      fileName: 'welcome.cpp',
+      run: '$ g++ welcome.cpp -o welcome && ./welcome',
+      code: `void joinDevClub() {\n  std::cout << welcomeMessage << std::endl;\n  surprise();\n}`,
+    },
+    {
+      id: 'go',
+      label: 'Go',
+      fileName: 'welcome.go',
+      run: '$ go run welcome.go',
+      code: `func joinDevClub() {\n  fmt.Println(welcomeMessage)\n  surprise()\n}`,
+    },
+    {
+      id: 'rs',
+      label: 'Rust',
+      fileName: 'welcome.rs',
+      run: '$ cargo run',
+      code: `fn join_dev_club() {\n  println!("{}", welcome_message);\n  surprise();\n}`,
+    },
+    {
+      id: 'sh',
+      label: 'Bash',
+      fileName: 'welcome.sh',
+      run: '$ bash welcome.sh',
+      code: `join_dev_club() {\n  echo "$welcome_message"\n  surprise\n}`,
+    },
+  ] as const
+  const [currentLangIndex, setCurrentLangIndex] = useState(0)
+  const [showWelcome, setShowWelcome] = useState(false)
 
   // still static
   useEffect(() => {
@@ -84,6 +144,24 @@ function App() {
       cancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentLangIndex((prev) => (prev + 1) % languageExamples.length)
+    }, 3500)
+    return () => clearInterval(intervalId)
+  }, [])
+
+  const currentExample = languageExamples[currentLangIndex]
+
+  const handleRun = () => {
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+    })
+    setShowWelcome(true)
+  }
 
   return (
     <div className="min-h-screen bg-gray-800 text-white font-['Inter']" id="root">
@@ -173,50 +251,40 @@ function App() {
                   <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                 </div>
-                <div className="text-white/60 text-sm font-medium">welcome.js</div>
-                <div className="w-12"></div>
+                <div className="text-white/60 text-sm font-medium">{currentExample.fileName}</div>
+                <div className="w-12 text-right text-[10px] text-white/40">{currentExample.label}</div>
               </div>
 
               <div className="p-4 font-mono text-sm">
-                <div className="text-purple-400">function <span className="text-blue-400">joinDevClub</span>() {"{"}</div>
-                <div className="ml-4 text-white/80">console.log(<span className="text-green-400">welcomeMessage</span>);</div>
-                <div className="ml-4 text-white/80">surprise();</div>
-                <div className="text-purple-400">{"}"}</div>
+                <pre className="text-white/80 whitespace-pre leading-6">{currentExample.code}</pre>
               </div>
 
               {/* interactive console, which really should only be available on computer */}
               <div className="p-4 font-mono text-sm bg-black/30">
-                <div className="text-green-400 mb-2">$ node welcome.js</div>
+                <div className="text-green-400 mb-2">{currentExample.run}</div>
                 <div className="text-white/80 mb-1">Dev Club Interactive Console v1.0.0</div>
-                <hr className="mb-2 border-white/10" />
-                <div className="text-white/80 mb-1 hidden" id="welcome-message">
-                  <div className="font-semibold">Welcome to Dev Club! 🎉</div>
-                  <div>
-                    - <a href="https://discord.gg/sP3WVQRQPC" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Join the Discord!</a>
+                <hr className="mb-3 border-white/10" />
+                {showWelcome ? (
+                  <div className="text-white/80 mb-3">
+                    <div className="font-semibold">Welcome to Dev Club! 🎉</div>
+                    <div>
+                      - <a href="https://discord.gg/sP3WVQRQPC" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Join the Discord!</a>
+                    </div>
+                    <div>
+                      - <a href="https://ion.tjhsst.edu/eighth/activity/12" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Sign up on Wednesday 8B!</a>
+                    </div>
                   </div>
-                  <div>
-                    - <a href="https://ion.tjhsst.edu/eighth/activity/12" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">Sign up on Wednesday 8B!</a>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-green-400 mr-2">&gt;</span>
-                  <input
-                    type="text"
-                    className="bg-transparent text-white outline-none flex-1 font-mono"
-                    placeholder="Type joinDevClub() and press Enter..."
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && e.currentTarget.value.trim() === 'joinDevClub()') {
-                        confetti({
-                          particleCount: 150,
-                          spread: 70,
-                          origin: { y: 0.6 }
-                        });
-                        document.getElementById('welcome-message')?.classList.remove('hidden');
-                        e.currentTarget.value = '';
-                      }
-                    }}
-                  />
-                </div>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={handleRun}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-md border border-white/20 hover:border-white/30 transition-all duration-200"
+                >
+                  Run joinDevClub()
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
