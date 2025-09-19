@@ -3,7 +3,6 @@
     "title": "Kickoff + Club Overview",
     "description": "Hello World! Welcome to Dev Club. We'll go over the club, the website, and the basics of web development.",
     "links": [
-      { "label": "Sign up for Sept. 10", "href": "https://ion.tjhsst.edu/eighth/signup/4558?activity=12", "kind": "signup" },
-      { "label": "Sign up for Sept. 17", "href": "https://ion.tjhsst.edu/eighth/signup/4562?activity=12", "kind": "signup" }
+      { "label": "View Slides", "href": "https://docs.google.com/presentation/d/1W3wpb2PrkGp5k-Wf6hif8euD0b2VCwHAta8fSHdsxEo/edit?usp=sharing", "kind": "slides" }
     ]
 }

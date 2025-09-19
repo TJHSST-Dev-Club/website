@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import confetti from 'canvas-confetti'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Skeleton } from '@/components/ui/skeleton'
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
 // Import base languages first, then languages that depend on them
@@ -67,6 +68,103 @@ type Lecture = {
 function App() {
   const [fetchedLectures, setFetchedLectures] = useState<null | { upcoming: Lecture[]; previous: Lecture[] }>(null)
   
+  const GITHUB_LECTURES_API = 'https://api.github.com/repos/TJHSST-Dev-Club/website/contents/lectures'
+  const LECTURES_CACHE_KEY = 'lectures_raw_cache_v1'
+  const LECTURES_CACHE_TTL_MS = 15 * 60 * 1000 // 15 minutes
+
+  const parseYearFromFilename = (filename: string): number | undefined => {
+    const m = filename.match(/^(\d{1,2})-(\d{1,2})-(\d{4})-/)
+    if (!m) return undefined
+    return Number(m[3])
+  }
+
+  const parseLastMonthDayFromDateString = (dateStr: string): { monthIndex: number; day: number } | null => {
+    if (!dateStr) return null
+    // Split by common separators for multiple dates and take the last part
+    const parts = dateStr.split(/\s*&\s*|\s*and\s*|\s*\/\s*/i)
+    const last = (parts[parts.length - 1] || '').trim()
+    // Remove weekday prefixes like "Wed, "
+    const cleaned = last.replace(/^[A-Za-z]{3,9},?\s+/, '')
+    // Match month name and day number
+    const match = cleaned.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s+(\d{1,2})/i)
+    if (!match) return null
+    const monthName = match[1].toLowerCase()
+    const day = Number(match[2])
+    const monthMap: Record<string, number> = {
+      jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+      jul: 6, aug: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11,
+    }
+    const key = monthName.slice(0, 4) === 'sept' ? 'sept' : monthName.slice(0, 3)
+    const monthIndex = monthMap[key]
+    if (monthIndex === undefined || Number.isNaN(day)) return null
+    return { monthIndex, day }
+  }
+
+  const computeEventDate = (dateStr: string, filename: string): Date | null => {
+    const md = parseLastMonthDayFromDateString(dateStr)
+    const year = parseYearFromFilename(filename) ?? new Date().getFullYear()
+    if (!md) return null
+    const d = new Date(year, md.monthIndex, md.day)
+    if (Number.isNaN(d.getTime())) return null
+    return d
+  }
+
+  const fetchLecturesFromGitHub = async (): Promise<Lecture[]> => {
+    const res = await fetch(GITHUB_LECTURES_API, { headers: { 'Accept': 'application/json' } })
+    if (!res.ok) throw new Error(`Failed to list lectures: ${res.status}`)
+    const files: Array<{ name: string; download_url: string; type: string }> = await res.json()
+    const jsonFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.json'))
+    const lectures = await Promise.all(
+      jsonFiles.map(async (f) => {
+        const fr = await fetch(f.download_url, { headers: { 'Accept': 'application/json' } })
+        if (!fr.ok) throw new Error(`Failed to fetch ${f.name}: ${fr.status}`)
+        const data = await fr.json()
+        return { ...data, filename: f.name } as Lecture
+      })
+    )
+    return lectures
+  }
+
+  type LecturesCacheShape = { savedAtMs: number; lectures: Lecture[] }
+  const readCachedLectures = (): Lecture[] | null => {
+    try {
+      const raw = localStorage.getItem(LECTURES_CACHE_KEY)
+      if (!raw) return null
+      const parsed = JSON.parse(raw) as LecturesCacheShape
+      if (!parsed || !Array.isArray(parsed.lectures) || typeof parsed.savedAtMs !== 'number') return null
+      if (Date.now() - parsed.savedAtMs > LECTURES_CACHE_TTL_MS) return null
+      return parsed.lectures
+    } catch {
+      return null
+    }
+  }
+  const writeCachedLectures = (lectures: Lecture[]) => {
+    try {
+      const payload: LecturesCacheShape = { savedAtMs: Date.now(), lectures }
+      localStorage.setItem(LECTURES_CACHE_KEY, JSON.stringify(payload))
+    } catch {
+      // ignore cache write errors
+    }
+  }
+
+  const classifyLectures = (lectures: Lecture[]): { upcoming: Lecture[]; previous: Lecture[] } => {
+    const today = new Date()
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+    const withDates = lectures.map(l => ({
+      lecture: l,
+      eventDate: computeEventDate(l.date, l.filename),
+    })).filter(x => x.eventDate)
+    const upcoming = withDates
+      .filter(x => (x.eventDate as Date) >= todayStart)
+      .sort((a, b) => (a.eventDate as Date).getTime() - (b.eventDate as Date).getTime())
+      .map(x => x.lecture)
+    const previous = withDates
+      .filter(x => (x.eventDate as Date) < todayStart)
+      .sort((a, b) => (b.eventDate as Date).getTime() - (a.eventDate as Date).getTime())
+      .map(x => x.lecture)
+    return { upcoming, previous }
+  }
+  
   const languageExamples = [
     {
       id: 'javascript',
@@ -128,29 +226,36 @@ function App() {
   const [currentLangIndex, setCurrentLangIndex] = useState(0)
   const [showWelcome, setShowWelcome] = useState(false)
 
-  // still static
+  // Fetch from GitHub and compute upcoming/previous on the client, fallback to static JSON
   useEffect(() => {
     let cancelled = false
     const load = async () => {
       try {
-        const res = await fetch('/lectures.json', { headers: { 'Accept': 'application/json' } })
-        if (!res.ok) return
-        const data = await res.json()
-        if (!cancelled && data && (Array.isArray(data.upcoming) || Array.isArray(data.previous))) {
-          setFetchedLectures({
-            upcoming: Array.isArray(data.upcoming) ? data.upcoming.sort((a: Lecture, b: Lecture) => {
-              // Extract the M-D part
-              const [monthA, dayA] = a.filename.match(/^(\d+)-(\d+)-/)?.slice(1, 3).map(Number) || [];
-              const [monthB, dayB] = b.filename.match(/^(\d+)-(\d+)-/)?.slice(1, 3).map(Number) || [];
-
-              // Convert to a comparable number (or Date)
-              return new Date(2000, monthA - 1, dayA).getTime() - new Date(2000, monthB - 1, dayB).getTime();
-            }) : [],
-            previous: Array.isArray(data.previous) ? data.previous : [],
-          })
+        // Use cache if fresh
+        const cached = readCachedLectures()
+        if (cached) {
+          if (!cancelled) setFetchedLectures(classifyLectures(cached))
+          return
         }
+        // Try GitHub first
+        const lectures = await fetchLecturesFromGitHub()
+        if (cancelled) return
+        writeCachedLectures(lectures)
+        setFetchedLectures(classifyLectures(lectures))
       } catch (_) {
-        // ignore and keep placeholders
+        // Fallback to static JSON
+        try {
+          const res = await fetch('/lectures.json', { headers: { 'Accept': 'application/json' } })
+          if (!res.ok) return
+          const data = await res.json()
+          if (!cancelled && data && (Array.isArray(data.upcoming) || Array.isArray(data.previous))) {
+            const all = [...(data.upcoming || []), ...(data.previous || [])] as Lecture[]
+            writeCachedLectures(all)
+            setFetchedLectures(classifyLectures(all))
+          }
+        } catch {
+          // ignore and keep placeholders
+        }
       }
     }
     load()
@@ -391,6 +496,23 @@ function App() {
             </div>
             <div className="mx-auto mt-12 max-w-6xl">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {!fetchedLectures ? (
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <div key={`lecture-skel-${i}`} className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 p-5 shadow-lg">
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-5 w-20 bg-white/10" />
+                        <Skeleton className="h-5 w-16 bg-white/10" />
+                      </div>
+                      <Skeleton className="mt-3 h-6 w-3/4 bg-white/10" />
+                      <Skeleton className="mt-2 h-4 w-full bg-white/10" />
+                      <Skeleton className="mt-1 h-4 w-5/6 bg-white/10" />
+                      <div className="mt-3 flex gap-2">
+                        <Skeleton className="h-8 w-24 bg-white/10" />
+                        <Skeleton className="h-8 w-20 bg-white/10" />
+                      </div>
+                    </div>
+                  ))
+                ) : null}
                 {/* Upcoming lectures */}
                 {fetchedLectures?.upcoming.map((lecture) => (
                   <div
