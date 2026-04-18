@@ -20,40 +20,22 @@ import 'prismjs/components/prism-bash';
 
 const officers = [
   {
-    name: 'Eric Guo',
     role: 'Team Lead',
-    imageUrl: 'officers/eric.jpg',
-    githubUrl: 'https://github.com/BaconErie',
   },
   {
-    name: 'Aarush Chaurasis',
     role: 'Frontend Lead',
-    imageUrl: 'officers/aarush.jpg',
-    githubUrl: 'https://github.com/aarushtools',
   },
   {
-    name: 'Bryce Conrad',
     role: 'Backend Lead',
-    imageUrl: 'officers/bryce.jpg',
-    githubUrl: 'https://github.com/' + 'makors',
   },
   {
-    name: 'Sroshsafa Shirzay',
     role: 'Standalone Apps Lead',
-    imageUrl: 'officers/srosh.jpg',
-    githubUrl: 'https://github.com/sroshc',
   },
   {
-    name: 'Hridhaan Banerjee',
     role: 'Treasurer and Event Coordinator',
-    imageUrl: 'officers/hridhaan.jpg',
-    githubUrl: 'https://github.com/HridhaanB',
   },
   {
-    name: 'Shaun Saladi',
     role: 'Low-Level Programming Specialist',
-    imageUrl: 'https://avatars.githubusercontent.com/u/1024025',
-    githubUrl: 'https://github.com/shaun208',
   },
 ]
 
@@ -66,6 +48,7 @@ type Lecture = {
 }
 
 function App() {
+  const SHOW_LECTURES_SECTION = false
   const [fetchedLectures, setFetchedLectures] = useState<null | { upcoming: Lecture[]; previous: Lecture[] }>(null)
   
   const GITHUB_LECTURES_API = 'https://api.github.com/repos/TJHSST-Dev-Club/website/contents/lectures'
@@ -485,112 +468,114 @@ function App() {
         </div>
 
         {/* lectures content */}
-        <div id="lectures" className="py-12 md:py-24">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8 xl:px-16">
-            <div className="mx-auto max-w-2xl lg:text-center">
-              <h2 className="text-base font-semibold leading-7 text-blue-400">Lectures</h2>
-              <p className="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">Upcoming & Previous</p>
-              <p className="mt-6 text-lg leading-8 text-gray-300">
-                See what's coming up and catch up on recent sessions.
-              </p>
-            </div>
-            <div className="mx-auto mt-12 max-w-6xl">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {!fetchedLectures ? (
-                  Array.from({ length: 6 }).map((_, i) => (
-                    <div key={`lecture-skel-${i}`} className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 p-5 shadow-lg">
-                      <div className="flex items-center justify-between">
-                        <Skeleton className="h-5 w-20 bg-white/10" />
-                        <Skeleton className="h-5 w-16 bg-white/10" />
+        {SHOW_LECTURES_SECTION ? (
+          <div id="lectures" className="py-12 md:py-24">
+            <div className="mx-auto max-w-7xl px-6 lg:px-8 xl:px-16">
+              <div className="mx-auto max-w-2xl lg:text-center">
+                <h2 className="text-base font-semibold leading-7 text-blue-400">Lectures</h2>
+                <p className="mt-2 text-4xl font-bold tracking-tight text-white sm:text-5xl">Upcoming & Previous</p>
+                <p className="mt-6 text-lg leading-8 text-gray-300">
+                  See what's coming up and catch up on recent sessions.
+                </p>
+              </div>
+              <div className="mx-auto mt-12 max-w-6xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {!fetchedLectures ? (
+                    Array.from({ length: 6 }).map((_, i) => (
+                      <div key={`lecture-skel-${i}`} className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 p-5 shadow-lg">
+                        <div className="flex items-center justify-between">
+                          <Skeleton className="h-5 w-20 bg-white/10" />
+                          <Skeleton className="h-5 w-16 bg-white/10" />
+                        </div>
+                        <Skeleton className="mt-3 h-6 w-3/4 bg-white/10" />
+                        <Skeleton className="mt-2 h-4 w-full bg-white/10" />
+                        <Skeleton className="mt-1 h-4 w-5/6 bg-white/10" />
+                        <div className="mt-3 flex gap-2">
+                          <Skeleton className="h-8 w-24 bg-white/10" />
+                          <Skeleton className="h-8 w-20 bg-white/10" />
+                        </div>
                       </div>
-                      <Skeleton className="mt-3 h-6 w-3/4 bg-white/10" />
-                      <Skeleton className="mt-2 h-4 w-full bg-white/10" />
-                      <Skeleton className="mt-1 h-4 w-5/6 bg-white/10" />
-                      <div className="mt-3 flex gap-2">
-                        <Skeleton className="h-8 w-24 bg-white/10" />
-                        <Skeleton className="h-8 w-20 bg-white/10" />
+                    ))
+                  ) : null}
+                  {/* Upcoming lectures */}
+                  {fetchedLectures?.upcoming.map((lecture) => (
+                    <div
+                      key={`upcoming-${lecture.date}-${lecture.title}`}
+                      className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 p-5 shadow-lg transition-all hover:bg-white/15 hover:shadow-xl hover:-translate-y-0.5 relative"
+                    >
+                      <div className="absolute top-3 right-3">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 border border-green-400/30 px-2 py-0.5 text-xs text-green-300 font-medium">
+                          <Calendar className="h-3 w-3" />
+                          Upcoming
+                        </span>
+                      </div>
+                      <div className="inline-flex items-center gap-1 rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-xs text-white/70">
+                        {lecture.date}
+                      </div>
+                      <div className="mt-2 text-base md:text-lg font-semibold text-white pr-20">{lecture.title}</div>
+                      {lecture.description ? (
+                        <p className="mt-1 text-sm text-white/70">{lecture.description}</p>
+                      ) : null}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {lecture.links.map((link) => (
+                          <a
+                            key={link.label}
+                            href={link.href}
+                            target={link.href.startsWith('http') ? '_blank' : undefined}
+                            rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                            className="inline-flex items-center gap-1.5 rounded-md bg-white/10 border border-white/15 px-2.5 py-1.5 text-sm text-white/90 hover:bg-white/20"
+                          >
+                            {link.kind === 'slides' ? <FileText className="h-4 w-4" /> : null}
+                            {link.kind === 'code' ? <Github className="h-4 w-4" /> : null}
+                            {link.kind !== 'slides' && link.kind !== 'code' ? <ExternalLink className="h-4 w-4" /> : null}
+                            {link.label}
+                          </a>
+                        ))}
                       </div>
                     </div>
-                  ))
-                ) : null}
-                {/* Upcoming lectures */}
-                {fetchedLectures?.upcoming.map((lecture) => (
-                  <div
-                    key={`upcoming-${lecture.date}-${lecture.title}`}
-                    className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 p-5 shadow-lg transition-all hover:bg-white/15 hover:shadow-xl hover:-translate-y-0.5 relative"
-                  >
-                    <div className="absolute top-3 right-3">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-green-500/20 border border-green-400/30 px-2 py-0.5 text-xs text-green-300 font-medium">
-                        <Calendar className="h-3 w-3" />
-                        Upcoming
-                      </span>
+                  ))}
+                  {/* Previous lectures */}
+                  {fetchedLectures?.previous.map((lecture) => (
+                    <div
+                      key={`previous-${lecture.date}-${lecture.title}`}
+                      className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 p-5 shadow-lg transition-all hover:bg-white/15 hover:shadow-xl hover:-translate-y-0.5 relative"
+                    >
+                      <div className="absolute top-3 right-3">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-gray-500/20 border border-gray-400/30 px-2 py-0.5 text-xs text-gray-300 font-medium">
+                          <Calendar className="h-3 w-3" />
+                          Previous
+                        </span>
+                      </div>
+                      <div className="inline-flex items-center gap-1 rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-xs text-white/70">
+                        {lecture.date}
+                      </div>
+                      <div className="mt-2 text-base md:text-lg font-semibold text-white pr-20">{lecture.title}</div>
+                      {lecture.description ? (
+                        <p className="mt-1 text-sm text-white/70">{lecture.description}</p>
+                      ) : null}
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {lecture.links.map((link) => (
+                          <a
+                            key={link.label}
+                            href={link.href}
+                            target={link.href.startsWith('http') ? '_blank' : undefined}
+                            rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                            className="inline-flex items-center gap-1.5 rounded-md bg-white/10 border border-white/15 px-2.5 py-1.5 text-sm text-white/90 hover:bg-white/20"
+                          >
+                            {link.kind === 'slides' ? <FileText className="h-4 w-4" /> : null}
+                            {link.kind === 'code' ? <Github className="h-4 w-4" /> : null}
+                            {link.kind !== 'slides' && link.kind !== 'code' ? <ExternalLink className="h-4 w-4" /> : null}
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
                     </div>
-                    <div className="inline-flex items-center gap-1 rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-xs text-white/70">
-                      {lecture.date}
-                    </div>
-                    <div className="mt-2 text-base md:text-lg font-semibold text-white pr-20">{lecture.title}</div>
-                    {lecture.description ? (
-                      <p className="mt-1 text-sm text-white/70">{lecture.description}</p>
-                    ) : null}
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {lecture.links.map((link) => (
-                        <a
-                          key={link.label}
-                          href={link.href}
-                          target={link.href.startsWith('http') ? '_blank' : undefined}
-                          rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                          className="inline-flex items-center gap-1.5 rounded-md bg-white/10 border border-white/15 px-2.5 py-1.5 text-sm text-white/90 hover:bg-white/20"
-                        >
-                          {link.kind === 'slides' ? <FileText className="h-4 w-4" /> : null}
-                          {link.kind === 'code' ? <Github className="h-4 w-4" /> : null}
-                          {link.kind !== 'slides' && link.kind !== 'code' ? <ExternalLink className="h-4 w-4" /> : null}
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                {/* Previous lectures */}
-                {fetchedLectures?.previous.map((lecture) => (
-                  <div
-                    key={`previous-${lecture.date}-${lecture.title}`}
-                    className="rounded-xl bg-white/10 backdrop-blur-xl border border-white/15 p-5 shadow-lg transition-all hover:bg-white/15 hover:shadow-xl hover:-translate-y-0.5 relative"
-                  >
-                    <div className="absolute top-3 right-3">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-gray-500/20 border border-gray-400/30 px-2 py-0.5 text-xs text-gray-300 font-medium">
-                        <Calendar className="h-3 w-3" />
-                        Previous
-                      </span>
-                    </div>
-                    <div className="inline-flex items-center gap-1 rounded-full bg-white/10 border border-white/15 px-2 py-0.5 text-xs text-white/70">
-                      {lecture.date}
-                    </div>
-                    <div className="mt-2 text-base md:text-lg font-semibold text-white pr-20">{lecture.title}</div>
-                    {lecture.description ? (
-                      <p className="mt-1 text-sm text-white/70">{lecture.description}</p>
-                    ) : null}
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {lecture.links.map((link) => (
-                        <a
-                          key={link.label}
-                          href={link.href}
-                          target={link.href.startsWith('http') ? '_blank' : undefined}
-                          rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                          className="inline-flex items-center gap-1.5 rounded-md bg-white/10 border border-white/15 px-2.5 py-1.5 text-sm text-white/90 hover:bg-white/20"
-                        >
-                          {link.kind === 'slides' ? <FileText className="h-4 w-4" /> : null}
-                          {link.kind === 'code' ? <Github className="h-4 w-4" /> : null}
-                          {link.kind !== 'slides' && link.kind !== 'code' ? <ExternalLink className="h-4 w-4" /> : null}
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : null}
         {/* officers content */}
         <div id="officers" className="py-12 md:py-24">
           <div className="mx-auto max-w-7xl px-6 lg:px-8 xl:px-16">
@@ -606,21 +591,12 @@ function App() {
               className="mx-auto mt-20 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3"
             >
               {officers.map((officer) => (
-                <li key={officer.name} className="flex flex-col items-center text-center">
-                  <img className="size-40 rounded-lg object-cover" src={officer.imageUrl} alt={`Profile of ${officer.name}`} />
-                  <h3 className="mt-4 text-lg font-semibold leading-7 tracking-tight text-white">
-                    {officer.name}
-                  </h3>
-                  <p className="text-sm leading-6 text-blue-400">{officer.role}</p>
-                  <a
-                    href={officer.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group mt-4 inline-flex items-center gap-x-2 text-sm font-medium text-gray-400 hover:text-white"
-                  >
-                    <Github className="h-5 w-5 text-gray-500 group-hover:text-white" />
-                    GitHub
-                  </a>
+                <li key={officer.role} className="flex flex-col items-center text-center rounded-2xl border border-white/10 bg-white/5 px-6 py-8">
+                  <div className="flex size-16 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15">
+                    <UserCheck className="h-8 w-8 text-blue-300" />
+                  </div>
+                  <p className="mt-4 text-sm uppercase tracking-[0.3em] text-white/50">Officer Role</p>
+                  <p className="mt-2 text-lg leading-7 text-blue-400">{officer.role}</p>
                 </li>
               ))}
             </ul>
@@ -711,11 +687,6 @@ function App() {
                     <li>
                       <a href="#about" className="text-sm leading-6 text-gray-300 hover:text-white">
                         About
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#lectures" className="text-sm leading-6 text-gray-300 hover:text-white">
-                        Lectures
                       </a>
                     </li>
                     <li>
