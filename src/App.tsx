@@ -187,9 +187,10 @@ function App() {
                 href={ION_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-fog px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white"
+                className="inline-flex items-center gap-1.5 rounded-full bg-fog px-6 py-2.5 font-medium text-ink transition-colors hover:bg-white"
               >
                 Sign up on Ion
+                <ArrowUpRight className="size-4 opacity-60" />
               </a>
               <a
                 href={DISCORD_URL}
