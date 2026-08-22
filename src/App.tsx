@@ -152,8 +152,8 @@ function App() {
                 tabIndex={0}
                 className="group/def relative inline-block cursor-help underline decoration-brand/40 decoration-wavy decoration-[0.045em] underline-offset-[0.16em] transition-colors duration-300 hover:decoration-brand/80 focus:decoration-brand/80 focus:outline-none"
               >
-                {/* Safari doesn't paint the h1's clipped gradient inside this inline-block, so the word carries its own; it must wrap only plain text or Safari hides it again */}
-                <span className="bg-clip-text text-transparent [background-image:linear-gradient(to_bottom,#fff_62%,rgba(234,236,244,0.62))]">
+                {/* solid color, no gradient clip: Safari doesn't paint the h1's clipped gradient inside this inline-block (invisible text), and a clip applied here bleeds the gradient into the underline (double squiggle) */}
+                <span className="text-white">
                   {'build · er'}
                 </span>
                 <span
