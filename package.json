@@ -4,9 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "predev": "node scripts/fetch-lectures.mjs",
     "dev": "vite",
-    "prebuild": "node scripts/fetch-lectures.mjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite build && vite preview"
@@ -15,12 +13,11 @@
     "@radix-ui/react-accordion": "^1.2.12",
     "@tailwindcss/vite": "^4.1.12",
     "@types/canvas-confetti": "^1.9.0",
-    "@types/prismjs": "^1.26.5",
+    "asciiground": "^1.4.0",
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.539.0",
-    "prismjs": "^1.30.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwind-merge": "^3.3.1",
