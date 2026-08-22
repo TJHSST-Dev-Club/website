@@ -152,7 +152,7 @@ function App() {
                 tabIndex={0}
                 className="group/def relative inline-block cursor-help underline decoration-brand/40 decoration-wavy decoration-[0.045em] underline-offset-[0.16em] transition-colors duration-300 hover:decoration-brand/80 focus:decoration-brand/80 focus:outline-none"
               >
-                build<span className="mx-[0.22em]">·</span>er
+                {'build · er'}
                 <span
                   role="tooltip"
                   className="pointer-events-none absolute top-full left-1/2 z-20 mt-5 w-[19.5rem] -translate-x-1/2 translate-y-1 rounded-xl border border-border bg-panel/95 p-5 text-left font-sans text-[15px] font-normal tracking-normal opacity-0 shadow-xl shadow-black/40 backdrop-blur-md transition-all duration-200 group-hover/def:translate-y-0 group-hover/def:opacity-100 group-focus/def:translate-y-0 group-focus/def:opacity-100"
