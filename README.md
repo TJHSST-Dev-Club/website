@@ -18,13 +18,33 @@ bun run build
 
 # Preview production build
 bun run preview
+
+# Preview through the local Cloudflare Workers runtime
+bun run preview:worker
+
+# Build and deploy to tjdev.club on Cloudflare Workers
+bun run deploy
 ```
 
 ### Scripts
 - `bun run dev` - Start development server
 - `bun run build` - Build for production
 - `bun run preview` - Preview production build
+- `bun run preview:worker` - Preview the production build with Wrangler
+- `bun run deploy` - Build and deploy the site to Cloudflare Workers
 - `bun run lint` - Run ESLint
+
+## Cloudflare deployment
+
+The production site is deployed as a Cloudflare Worker with static assets. The
+Worker configuration lives in `wrangler.jsonc` and attaches the deployment to
+the `tjdev.club/*` Worker route.
+
+Before the first deploy, authenticate Wrangler with `bunx wrangler login` and
+make sure the authenticated Cloudflare account contains the active
+`tjdev.club` zone. The apex DNS record is managed separately in the
+`TJHSST-Dev-Club/dns` repository and must remain proxied through Cloudflare for
+the Worker route to receive traffic.
 
 ## Officers section
 
