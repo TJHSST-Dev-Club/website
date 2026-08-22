@@ -251,9 +251,12 @@ function App() {
               <p className="mt-4 font-mono text-[13px] text-mist/70">/kəˈmjuː·nə·di/</p>
               <p className="mt-5 text-[15px] leading-relaxed text-mist">
                 <span className="text-mist/60 tabular-nums">1.</span> the people you learn, build,
-                and ship with. <span className="text-mist/60 tabular-nums">2.</span>{' '}
-                <span className="relative whitespace-nowrap">
-                  pictured below.
+                and ship with.{' '}
+                {/* own line on mobile so "2." can't strand at the end of the previous line */}
+                <span className="block sm:inline">
+                  <span className="text-mist/60 tabular-nums">2.</span>{' '}
+                  <span className="relative whitespace-nowrap">
+                    pictured below.
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 48 72"
@@ -276,6 +279,7 @@ function App() {
                     <path strokeWidth="1.75" d="M20 55l7.5 8.5" />
                     <path strokeWidth="1.75" d="M36.5 57.5l-9.5 6.5" />
                   </svg>
+                  </span>
                 </span>
               </p>
             </div>
